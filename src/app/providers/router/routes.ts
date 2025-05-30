@@ -1,18 +1,18 @@
 export const routes = [
   {
     path: '/',
-    component: () => import('@/app/pages/home/'),
+    component: () => import('@/pages/home/'),
   },
   {
     path: '/meals',
-    component: () => import('@/app/pages/meals/'),
+    component: () => import('@/pages/meals/'),
   },
   {
     path: '/products',
-    component: () => import('@/app/pages/products/'),
+    component: () => import('@/pages/products/'),
   },
   {
     path: '/profile',
-    component: () => import('@/app/pages/profile/'),
+    component: () => import('@/pages/profile/'),
   },
 ]
