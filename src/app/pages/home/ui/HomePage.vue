@@ -2,6 +2,6 @@
 
 </script>
 
-<tamplates>
+<template>
   <h1>Home</h1>
-</tamplates>
+</template>

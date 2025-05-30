@@ -2,6 +2,6 @@
 
 </script>
 
-<tamplates>
+<template>
   <h1>Profile</h1>
-</tamplates>
+</template>

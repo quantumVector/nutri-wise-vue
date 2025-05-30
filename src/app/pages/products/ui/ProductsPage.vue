@@ -2,6 +2,6 @@
 
 </script>
 
-<tamplates>
+<template>
   <h1>Products</h1>
-</tamplates>
+</template>
