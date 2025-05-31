@@ -1,61 +1,65 @@
-# nutri-wise-vue
+# API Layer
 
-This template should help get you started developing with Vue 3 in Vite.
+Этот слой отвечает за взаимодействие с сервером и управление данными.
 
-## Recommended IDE Setup
+## Структура
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-yarn
+```
+src/shared/api/
+├── config.ts          # Конфигурация API и Axios
+├── types.ts           # Общие типы для API
+├── products.ts        # API методы для продуктов
+├── mocks/            
+│   ├── index.ts       # Экспорт всех моков
+│   └── products.ts    # Тестовые данные продуктов
+└── index.ts          # Главный экспорт
 ```
 
-### Compile and Hot-Reload for Development
+## Использование
 
-```sh
-yarn dev
+### Переключение между моками и реальным API
+
+В файле `.env` установите переменную:
+
+```bash
+# Использовать моки
+VITE_USE_MOCKS=true
+
+# Использовать реальный API
+VITE_USE_MOCKS=false
 ```
 
-### Type-Check, Compile and Minify for Production
+### Пример использования в store
 
-```sh
-yarn build
+```typescript
+import { productsApi } from '@/shared/api'
+
+// Получить все продукты
+const products = await productsApi.getProducts()
+
+// Создать продукт
+const newProduct = await productsApi.createProduct(productData)
+
+// Удалить продукт
+const success = await productsApi.deleteProduct(id)
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+## Моки
 
-```sh
-yarn test:unit
-```
+Когда `VITE_USE_MOCKS=true`, все API запросы будут возвращать статические данные из папки `mocks/`.
 
-### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
+Моки включают:
+- Имитацию задержки сети (500ms по умолчанию)
+- Локальное хранилище состояния
+- Реалистичные данные для разработки
 
-```sh
-yarn test:e2e:dev
-```
+## Реальный API
 
-This runs the end-to-end tests against the Vite development server.
-It is much faster than the production build.
+Когда `VITE_USE_MOCKS=false`, запросы будут отправляться на сервер по адресу из `VITE_API_BASE_URL`.
 
-But it's still recommended to test the production build with `test:e2e` before deploying (e.g. in CI environments):
-
-```sh
-yarn build
-yarn test:e2e
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-yarn lint
-```
+Ожидаемые эндпоинты:
+- `GET /api/products` - получить все продукты
+- `POST /api/products` - создать продукт
+- `GET /api/products/:id` - получить продукт по ID
+- `PUT /api/products/:id` - обновить продукт
+- `DELETE /api/products/:id` - удалить продукт

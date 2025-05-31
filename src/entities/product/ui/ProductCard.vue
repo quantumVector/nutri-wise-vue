@@ -1,23 +1,51 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import type { Product } from '../model/types'
 
 type Props = {
   product: Product
+  loading?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  loading: false
+})
 
 const emit = defineEmits<{
   delete: [id: string]
 }>()
 
-const handleDelete = () => {
-  emit('delete', props.product.id)
+const isDeleting = ref(false)
+
+const handleDelete = async () => {
+  isDeleting.value = true
+  try {
+    emit('delete', props.product.id)
+  } finally {
+    // Задержка чтобы показать состояние загрузки
+    setTimeout(() => {
+      isDeleting.value = false
+    }, 1000)
+  }
+}
+
+const formatDate = (date: Date) => {
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(new Date(date))
 }
 </script>
 
 <template>
-  <v-card class="mb-4" elevation="2">
+  <v-card
+    class="mb-4"
+    elevation="2"
+    :loading="isDeleting"
+  >
     <v-card-title class="d-flex justify-space-between align-center">
       <span>{{ product.name }}</span>
       <v-chip
@@ -56,6 +84,12 @@ const handleDelete = () => {
           </div>
         </v-col>
       </v-row>
+
+      <v-divider class="my-3" />
+
+      <div class="text-caption text-medium-emphasis">
+        Создан: {{ formatDate(product.createdAt) }}
+      </div>
     </v-card-text>
 
     <v-card-actions>
@@ -65,6 +99,8 @@ const handleDelete = () => {
         variant="text"
         size="small"
         prepend-icon="mdi-delete"
+        :loading="isDeleting"
+        :disabled="isDeleting || loading"
         @click="handleDelete"
       >
         Удалить
