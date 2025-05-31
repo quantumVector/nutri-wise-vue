@@ -57,9 +57,11 @@ const handleSubmit = async () => {
   const { valid } = await form.value.validate()
 
   if (valid) {
-    productStore.addProduct({ ...formData })
-    emit('update:modelValue', false)
-    resetForm()
+    const success = await productStore.addProduct({ ...formData })
+    if (success) {
+      emit('update:modelValue', false)
+      resetForm()
+    }
   }
 }
 
@@ -104,28 +106,31 @@ watch(() => props.modelValue, (newValue) => {
               </v-col>
 
               <v-col cols="12" sm="6">
-                <v-number-input
-                  v-model="formData.calories"
+                <v-text-field
+                  v-model.number="formData.calories"
                   label="Калории (на 100г)"
                   :rules="rules.calories"
                   prepend-inner-icon="mdi-fire"
                   variant="outlined"
                   suffix="ккал"
-                  :min="0"
-                  :max="1000"
+                  type="number"
+                  min="0"
+                  max="1000"
                 />
               </v-col>
 
               <v-col cols="12" sm="6">
-                <v-number-input
-                  v-model="formData.nutrients.fiber"
+                <v-text-field
+                  v-model.number="formData.nutrients.fiber"
                   label="Клетчатка"
                   :rules="rules.nutrients"
                   prepend-inner-icon="mdi-grass"
                   variant="outlined"
                   suffix="г"
-                  :min="0"
-                  :max="100"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
                 />
               </v-col>
 
@@ -135,41 +140,47 @@ watch(() => props.modelValue, (newValue) => {
               </v-col>
 
               <v-col cols="12" sm="4">
-                <v-number-input
-                  v-model="formData.nutrients.proteins"
+                <v-text-field
+                  v-model.number="formData.nutrients.proteins"
                   label="Белки"
                   :rules="rules.nutrients"
                   prepend-inner-icon="mdi-dumbbell"
                   variant="outlined"
                   suffix="г"
-                  :min="0"
-                  :max="100"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
                 />
               </v-col>
 
               <v-col cols="12" sm="4">
-                <v-number-input
-                  v-model="formData.nutrients.fats"
+                <v-text-field
+                  v-model.number="formData.nutrients.fats"
                   label="Жиры"
                   :rules="rules.nutrients"
                   prepend-inner-icon="mdi-water"
                   variant="outlined"
                   suffix="г"
-                  :min="0"
-                  :max="100"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
                 />
               </v-col>
 
               <v-col cols="12" sm="4">
-                <v-number-input
-                  v-model="formData.nutrients.carbohydrates"
+                <v-text-field
+                  v-model.number="formData.nutrients.carbohydrates"
                   label="Углеводы"
                   :rules="rules.nutrients"
                   prepend-inner-icon="mdi-grain"
                   variant="outlined"
                   suffix="г"
-                  :min="0"
-                  :max="100"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
                 />
               </v-col>
             </v-row>
@@ -183,13 +194,15 @@ watch(() => props.modelValue, (newValue) => {
           color="grey-darken-1"
           variant="text"
           @click="handleCancel"
+          :disabled="productStore.loading"
         >
           Отмена
         </v-btn>
         <v-btn
           color="primary"
           variant="elevated"
-          :disabled="!isValid"
+          :disabled="!isValid || productStore.loading"
+          :loading="productStore.loading"
           @click="handleSubmit"
         >
           Создать
